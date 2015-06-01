@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The CyanogenMod Project
+ * Copyright (C) 2014 The auzone Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.cyanogenmod.bugreport;
+package org.auzone.bugreport;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -63,23 +63,23 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
-public class CMLogService extends IntentService {
-    private static final String TAG = "CMLogService";
+public class AZLogService extends IntentService {
+    private static final String TAG = "AZLogService";
     private static final String SCRUBBED_BUG_REPORT_PREFIX = "scrubbed_";
     private static final String FILENAME_PROC_VERSION = "/proc/version";
 
-    public static final String RO_CM_VERSION = "ro.cm.version";
+    public static final String RO_AZ_VERSION = "ro.az.version";
     public static final String SYSTEMLIB = "persist.sys.dalvik.vm.lib";
     public static final String DALVIKLIB = "libdvm.so";
     public static final String ARTLIB = "libart.so";
     public static final String BUILD_ID_FIELD = "customfield_10800";
     public static final String KERNELVER_FIELD = "customfield_10104";
 
-    public static Boolean isCMKernel = false;
+    public static Boolean isAZKernel = false;
     private PowerManager.WakeLock mWakeLock;
 
-    public CMLogService() {
-        super("CMLogService");
+    public AZLogService() {
+        super("AZLogService");
     }
 
     @Override
@@ -102,7 +102,7 @@ public class CMLogService extends IntentService {
         String description = intent.getStringExtra(Intent.EXTRA_TEXT);
         String kernelver = getFormattedKernelVersion();
         String syslib = SystemProperties.get(SYSTEMLIB);
-        if(!intent.getBooleanExtra("org.cyanogenmod.bugreport.AddScreenshot", false)) {
+        if(!intent.getBooleanExtra("org.auzone.bugreport.AddScreenshot", false)) {
             sshotUri = null;
         }
 
@@ -119,7 +119,7 @@ public class CMLogService extends IntentService {
             fields.put("summary", summary);
             fields.put("description", description);
             fields.put("issuetype", issuetype);
-            fields.put(BUILD_ID_FIELD, SystemProperties.get(RO_CM_VERSION, ""));
+            fields.put(BUILD_ID_FIELD, SystemProperties.get(RO_AZ_VERSION, ""));
             fields.put(KERNELVER_FIELD, kernelver);
             if (summary.startsWith(CrashFeedbackActivity.CRASH_PREFIX)) {
                 labels.put("crash");
@@ -131,8 +131,8 @@ public class CMLogService extends IntentService {
             } else if (DALVIKLIB.equals(syslib)){
                 labels.put("Dalvik");
             }
-            if (!isCMKernel){
-                labels.put("non-CM-kernel");
+            if (!isAZKernel){
+                labels.put("non-AZ-kernel");
             }
             fields.put("labels", labels);
             inputJSON.put("fields", fields);
@@ -168,8 +168,8 @@ public class CMLogService extends IntentService {
         }
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        nm.cancel(CMLogService.class.getSimpleName(), R.string.notif_title);
-        nm.notify(CMLogService.class.getSimpleName(), R.string.notif_title,
+        nm.cancel(AZLogService.class.getSimpleName(), R.string.notif_title);
+        nm.notify(AZLogService.class.getSimpleName(), R.string.notif_title,
                 notificationBuilder.build());
     }
 
@@ -178,16 +178,16 @@ public class CMLogService extends IntentService {
     }
 
     private void notifyUploadFinished(String issueNumber) {
-        notify(getString(R.string.notif_thanks), R.drawable.stat_cmbugreport, false, false);
+        notify(getString(R.string.notif_thanks), R.drawable.stat_azbugreport, false, false);
     }
 
     private void notifyProcessing() {
-        notify(getString(R.string.notif_processing), R.drawable.stat_cmbugreport, true, true);
+        notify(getString(R.string.notif_processing), R.drawable.stat_azbugreport, true, true);
     }
 
     private void notifyUploadFailed(int reasonResId) {
         String reason = getString(reasonResId);
-        notify(getString(R.string.error_upload_failed, reason), R.drawable.stat_cmbugreport, false,
+        notify(getString(R.string.error_upload_failed, reason), R.drawable.stat_azbugreport, false,
                 false);
     }
 
@@ -216,7 +216,7 @@ public class CMLogService extends IntentService {
             "(?:.*?)?" +              /* ignore: optional SMP, PREEMPT, and any CONFIG_FLAGS */
             "((Sun|Mon|Tue|Wed|Thu|Fri|Sat).+)"; /* group 4: "Thu Jun 28 11:02:39 PDT 2012" */
 
-        String builder_regex = "build\\d\\d\\@cyanogenmod";
+        String builder_regex = "build\\d\\d\\@auzone";
 
         Matcher m = Pattern.compile(PROC_VERSION_REGEX).matcher(rawKernelVersion);
         if (!m.matches()) {
@@ -230,7 +230,7 @@ public class CMLogService extends IntentService {
 
         Matcher k = Pattern.compile(builder_regex).matcher(m.group(2));
         if (k.matches()){
-            isCMKernel = true;
+            isAZKernel = true;
         }
 
         return m.group(1) + "\n" +                 // 3.0.31-g6fb96c9
@@ -356,7 +356,7 @@ public class CMLogService extends IntentService {
             File bugreportFile = new File("/data" + reportUri.getPath());
             File scrubbedBugReportFile = getFileStreamPath(SCRUBBED_BUG_REPORT_PREFIX
                     + bugreportFile.getName());
-            ScrubberUtils.scrubFile(CMLogService.this, bugreportFile, scrubbedBugReportFile);
+            ScrubberUtils.scrubFile(AZLogService.this, bugreportFile, scrubbedBugReportFile);
             if(sshotUri != null) {
                 File sshotFile = new File("/data" + sshotUri.getPath());
                 zippedReportFile = zipFiles(scrubbedBugReportFile, sshotFile);

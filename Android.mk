@@ -12,7 +12,7 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
 # include the prebuilt static library which is mentioned in
 LOCAL_STATIC_JAVA_LIBRARIES := bugreport_httpmime apachemime
 
-LOCAL_PACKAGE_NAME := CMBugReport
+LOCAL_PACKAGE_NAME := AZBugReport
 
 LOCAL_PROGUARD_FLAGS := -include $(LOCAL_PATH)/proguard.cfg
 

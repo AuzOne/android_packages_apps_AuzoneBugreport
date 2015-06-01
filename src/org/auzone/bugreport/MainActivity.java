@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The CyanogenMod Project
+ * Copyright (C) 2014 The auzone Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.cyanogenmod.bugreport;
+package org.auzone.bugreport;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -85,11 +85,11 @@ public class MainActivity extends Activity {
             return;
         }
 
-        Intent intent = new Intent(this, CMLogService.class);
+        Intent intent = new Intent(this, AZLogService.class);
         intent.putExtra(Intent.EXTRA_SUBJECT, summary);
         intent.putExtra(Intent.EXTRA_TEXT, description);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, mAttachments);
-        intent.putExtra("org.cyanogenmod.bugreport.AddScreenshot", ssPreference);
+        intent.putExtra("org.auzone.bugreport.AddScreenshot", ssPreference);
         startService(intent);
 
         // Make the screen go away

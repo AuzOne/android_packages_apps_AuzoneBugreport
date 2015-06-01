@@ -1,6 +1,6 @@
-package org.cyanogenmod.bugreport;
+package org.auzone.bugreport;
 /*
- * Copyright (C) 2014 The CyanogenMod Project
+ * Copyright (C) 2014 The auzone Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class CrashFeedbackActivity extends Activity {
 
     private static final String TAG = CrashFeedbackActivity.class.getSimpleName();
     public static final String LAST_SUBMISSION = "last_submission";
-    public static final String RO_CM_VERSION = "ro.cm.version";
+    public static final String RO_AZ_VERSION = "ro.az.version";
     public static final String CRASH_PREFIX = "[CRASH] ";
 
     ApplicationErrorReport mReport;
@@ -190,7 +190,7 @@ public class CrashFeedbackActivity extends Activity {
                 Log.i(TAG, "Stack trace: " + mReport.crashInfo.stackTrace);
             }
 
-            Intent uploadBugReportIntent = new Intent(this, CMLogService.class);
+            Intent uploadBugReportIntent = new Intent(this, AZLogService.class);
             uploadBugReportIntent.putExtra(Intent.EXTRA_SUBJECT, getSubjectLine());
             uploadBugReportIntent.putExtra(Intent.EXTRA_TEXT, content);
 
@@ -206,10 +206,10 @@ public class CrashFeedbackActivity extends Activity {
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager cm =
+        ConnectivityManager az =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = az.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnected();
         return isConnected;
